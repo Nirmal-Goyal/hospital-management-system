@@ -4,6 +4,7 @@ import cors from "cors"
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js"
 import testRoutes from "./routes/testRoutes.js"
+import appointmentRoutes from "./routes/appointmentRoutes.js"
 
 dotenv.config();
 connectDB();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
+app.use("/api/appointment", appointmentRoutes);
 
 app.get("/", (req, res) => {
     res.send("hospital-management api running")
