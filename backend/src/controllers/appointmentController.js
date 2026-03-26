@@ -55,3 +55,61 @@ export const getAllAppointments = async(req, res) => {
         })
     }
 }
+
+// DOCTOR -> Add prescription
+
+export const addPrescription = async(req, res) => {
+    try {
+        const appointment = await Appointment.findById(req.params.id)
+        if(!appointment){
+            res.status(404).json({
+                message: "Appointment not found"
+            })
+        }
+        if(appointment.doctor.toString() !== req.user._id.toString()){
+            res.status(403).json({
+                message: "Not authorized"
+            })
+        }
+
+        const {medicines, instructions} = req.body;
+
+        appointment.prescription = {
+            medicines,
+            instructions
+        }
+
+        appointment.status = "completed"
+
+        await appointment.save();
+
+        res.status(201).json({
+            message: "prescription added successfully",
+            appointment
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
+// PATIENT -> veiw prescription
+export const getPatientPrescription = async(req, res) => {
+    try {
+        const prescription = await Appointment.find(
+            {
+                patient: req.user._id,
+                status: "completed"
+            }
+        )
+        .populate("doctor", "name specialization")
+
+        res.json(prescription)
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
