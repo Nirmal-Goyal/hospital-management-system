@@ -78,3 +78,48 @@ export const loginUser = async(req, res) => {
         })
     }
 }
+
+// ADMIN -> create doctors
+export const createDoctor = async(req, res) =>{
+    try {
+        const {name, email, password, specialization} = req.body;
+        const existDoctor = await User.findOne({email})
+        if(existDoctor){
+            return res.status(400).json({
+                message: "Doctor already exists"
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const doctor = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: "doctor",
+            specialization
+        })
+
+        res.status(200).json({
+            message: "doctor created successfully",
+            doctor
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
+// Get all Doctors
+export const getAllDoctors = async(req, res) => {
+    try {
+        const doctor = await User.find({role: "doctor"}).select("-password")
+        res.json(doctor)
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
