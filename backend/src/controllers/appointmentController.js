@@ -113,3 +113,30 @@ export const getPatientPrescription = async(req, res) => {
         })
     }
 }
+
+
+// ADMIN and DOCTOR -> update status
+export const updateAppointmentStatus = async(req, res) => {
+    try {
+        const appointment = await Appointment.findById(req.params.id)
+        if(!appointment){
+            return res.status(404).json({
+                message: "Appointment not fount"
+            })
+        }
+
+        const {status} = req.body;
+        appointment.status = status;
+
+        await appointment.save();
+
+        res.status(200).json({
+            message: "Appointment status updated successfully",
+            appointment
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}

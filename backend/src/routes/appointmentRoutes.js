@@ -1,5 +1,5 @@
 import express from "express"
-import { bookAppointment, getDoctorAppointment, getAllAppointments, addPrescription, getPatientPrescription } from "../controllers/appointmentController.js"
+import { bookAppointment, getDoctorAppointment, getAllAppointments, addPrescription, getPatientPrescription, updateAppointmentStatus } from "../controllers/appointmentController.js"
 import { protect, authorizeRoles } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
@@ -13,5 +13,7 @@ router.get("/admin", protect, authorizeRoles("admin"), getAllAppointments);
 router.put("/prescription/:id", protect, authorizeRoles("doctor"), addPrescription);
 
 router.get("/my-prescriptions", protect, authorizeRoles("patient"), getPatientPrescription);
+
+router.put("/status/:id", protect, authorizeRoles("admin", "doctor"), updateAppointmentStatus)
 
 export default router;
